@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <title>Asset</title>
+
+  <!--http://www.html5rocks.com/en/mobile/mobifying/-->
+  <meta name="viewport"
+        content="width=device-width,user-scalable=no,initial-scale=1, minimum-scale=1,maximum-scale=1"/>
+
+  <!--https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- force webkit on 360 -->
+  <meta name="renderer" content="webkit"/>
+  <meta name="force-rendering" content="webkit"/>
+  <!-- force edge on IE -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <!-- force full screen on some browser -->
+  <meta name="full-screen" content="yes"/>
+  <meta name="x5-fullscreen" content="true"/>
+  <meta name="360-fullscreen" content="true"/>
+  
+  <!-- force screen orientation on some browser -->
+  <meta name="screen-orientation" content="landscape"/>
+  <meta name="x5-orientation" content="landscape">
+
+  <!--fix fireball/issues/3568 -->
+  <!--<meta name="browsermode" content="application">-->
+  <meta name="x5-page-mode" content="app">
+
+  <!--<link rel="apple-touch-icon" href=".png" />-->
+  <!--<link rel="apple-touch-icon-precomposed" href=".png" />-->
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <link rel="stylesheet" type="text/css" href="style-mobile.8cf19.css"/>
+  <link rel="icon" href="favicon.6340f.png"/>
+</head>
+<body>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- <script src="https://unpkg.com/@tonconnect/sdk@0.0.34/dist/tonconnect-sdk.min.js"></script> -->
+  <!-- <script src="https://unpkg.com/@tonconnect/ui@0.0.9/dist/tonconnect-ui.min.js"></script> -->
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@ton/core@0.59.0/dist/index.min.js"></script>
+  <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="0"></canvas>
+  <div id="splash">
+    <div class="progress-bar stripes">
+      <span style="width: 0%"></span>
+    </div>
+    <div class="sk-circle">
+      <div class="sk-circle1 sk-child"></div>
+      <div class="sk-circle2 sk-child"></div>
+      <div class="sk-circle3 sk-child"></div>
+      <div class="sk-circle4 sk-child"></div>
+      <div class="sk-circle5 sk-child"></div>
+      <div class="sk-circle6 sk-child"></div>
+      <div class="sk-circle7 sk-child"></div>
+      <div class="sk-circle8 sk-child"></div>
+      <div class="sk-circle9 sk-child"></div>
+      <div class="sk-circle10 sk-child"></div>
+      <div class="sk-circle11 sk-child"></div>
+      <div class="sk-circle12 sk-child"></div>
+    </div>
+  </div>
+
+<script src="src/settings.91d18.js" charset="utf-8"></script>
+
+<script src="main.6f574.js" charset="utf-8"></script>
+
+<script type="text/javascript">
+(function () {
+    // open web debugger console
+    if (typeof VConsole !== 'undefined') {
+        window.vConsole = new VConsole();
+    }
+
+    var debug = window._CCSettings.debug;
+    var splash = document.getElementById('splash');
+    splash.style.display = 'block';
+
+    function loadScript (moduleName, cb) {
+      function scriptLoaded () {
+          document.body.removeChild(domScript);
+          domScript.removeEventListener('load', scriptLoaded, false);
+          cb && cb();
+      };
+      var domScript = document.createElement('script');
+      domScript.async = true;
+      domScript.src = moduleName;
+      domScript.addEventListener('load', scriptLoaded, false);
+      document.body.appendChild(domScript);
+    }
+
+    loadScript(debug ? 'cocos2d-js.js' : 'cocos2d-js-min.55e56.js', function () {
+      if (CC_PHYSICS_BUILTIN || CC_PHYSICS_CANNON) {
+        loadScript(debug ? 'physics.js' : 'physics-min.941a2.js', window.boot);
+      }
+      else {
+        window.boot();
+      }
+    });
+})();
+let tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+    manifestUrl: 'https://site-production-cdea.up.railway.app/tonconnect-manifest.json'
+  });;
+window.connectdata = (async function connectdata() {
+
+  if (tonConnectUI && tonConnectUI.wallet && tonConnectUI.wallet.account) {
+    let messagedata = {
+      address: tonConnectUI.wallet.account.address
+    }
+    var targetWindow = window.parent;
+    targetWindow.postMessage(JSON.stringify(messagedata), '*');
+    return;
+  }
+  // await tonConnectUI.disconnect();
+  console.log("test data");
+  
+  console.log(tonConnectUI);
+  let dataRetun = await tonConnectUI.connectWallet();
+  console.log(dataRetun);
+  const currentWallet = tonConnectUI.wallet;
+  const currentWalletInfo = tonConnectUI.walletInfo;
+  const currentAccount = tonConnectUI.account;
+  const currentIsConnectedStatus = tonConnectUI.connected;
+  const walletsList = await tonConnectUI.getWallets();
+  // console.log(walletsList);
+  // console.log(currentWallet.account.address);
+  // console.log(currentWalletInfo);
+  // console.log(currentAccount);
+  // console.log(currentIsConnectedStatus);
+  // const currentWallet = tonConnectUI.wallet;
+  let messagedata = {
+      address: tonConnectUI.wallet.account.address
+    }
+  var targetWindow = window.parent;
+  targetWindow.postMessage(JSON.stringify(messagedata), '*');
+  console.log(messagedata)
+  // const connector = new TonConnectSDK.TonConnect();
+  // const walletsList = await connector.getWallets();
+  // console.log(connector);
+  // connector.restoreConnection();
+  // return tonConnectUI.connector;
+});
+window.logout = (async function logOut1() {
+  if (tonConnectUI && tonConnectUI.wallet && tonConnectUI.wallet.account) {
+    await tonConnectUI.connector.disconnect();
+  }
+});
+window.getWallet = (async function getconnectdata() {
+  // await tonConnectUI.disconnect();
+  console.log("test data");
+  // tonConnectUI = 
+  // const tonConnectUI = await new TON_CONNECT_UI.TonConnectUI({
+  //   manifestUrl: 'https://site-production-cdea.up.railway.app/tonconnect-manifest.json'
+  // });
+  console.log(tonConnectUI.wallet);
+  console.log(tonConnectUI.connector);
+  // const walletsList = await tonConnectUI.getWallets();
+  const currentWallet = tonConnectUI.wallet;
+  let messagedata = {
+      address: tonConnectUI.wallet.account.address
+    }
+  var targetWindow = window.parent;
+  targetWindow.postMessage(JSON.stringify(messagedata), '*');
+  console.log(messagedata)
+  // return "1111";
+
+});
+window.addEventListener(
+  "message",
+  async (event) => {
+    console.log(event.data);
+    let message = event.data;
+    if (message.action == "buy") {
+      // const body = beginCell()
+      //   .storeUint(0xf8a7ea5, 32) // op transfer
+      //   .storeUint(0, 64) // queryId
+      //   .storeCoins(toNano(5000)) // deposit_amount
+      //   .storeAddress(
+      //     "UQBMUkRfUZONZ3ypLUcb4_DYCWmyTCYwTrvHOjTWG0nGXikH",
+      //   ) // receiver address
+      //   .storeBit(0)
+      //   .storeAddress("UQBMUkRfUZONZ3ypLUcb4_DYCWmyTCYwTrvHOjTWG0nGXikH") //response_adress - address nhận phí GD thừa
+      //   // .storeMaybeRef(null) // custom_payload
+      //   .storeCoins(toNano("0.05")) // forward_ton_amount
+      //   .storeBit(0) 
+      //   // .storeMaybeRef(beginCell().storeStringTail("something").endCell()) // forward_payload_amount if receiver is a smart contract
+      //   .endCell();
+      // let body = "x{0F8A7EA500000000000000002138980098A488BEA3271ACEF9525A8E37C7E1B012D364984C609D778E7469AC36938CBD0013149117D464E359DF2A4B51C6F8FC36025A6C93098C13AEF1CE8D3586D271978805F5E100}";
+      // const myTransaction = {
+      //   validUntil: Math.floor(Date.now() / 1000) + 360,
+      //   messages: [
+      //     {
+      //       address: "EQBs7OocXB0N8qrLiGIjbYHlMiGkFRchEt_1C5BVfHyi72-D", // Your USDT jetton wallet address
+      //       amount: 200000000, // feee
+      //       payload: body//body.toBoc().toString("base64"), // payload with jetton transfer and comment body
+      //     },
+      //   ],
+      // };
+      // const result = await tonConnectUI.sendTransaction(myTransaction);
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 360,
+        messages: [
+              {
+                  address: "UQCCJ3X0KWE9JEMVutNHgxfd8iH0uagxdCH-hsMDlf1LL0mr", // destination address
+                  amount: message.amount //Toncoin in nanotons
+              }
+          ]
+      }
+      const result = await tonConnectUI.sendTransaction(transaction);
+
+
+      // you can use signed boc to find the transaction 
+      const someTxData = await myAppExplorerService.getTransaction(result.boc);
+      let messagedata = {
+        check: "someTxData"
+      }
+      var targetWindow = window.parent;
+      targetWindow.postMessage(JSON.stringify(messagedata), '*');
+      console.log(messagedata)
+    }
+
+    // …
+  },
+  false,
+);
+</script>
+</body>
+</html>
